@@ -10,11 +10,11 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # Подключение к базе данных
 def get_data_from_db():
     connection = mysql.connector.connect(
-        host='localhost',
-        user='your_username',
-        password='your_password',
-        database='your_database'
-    )
+		host="127.0.0.1",
+		user="root",
+		password="admin",
+		database="datchiki"
+	)
     query = "SELECT sensor_id, timestamp, value FROM sensor_data ORDER BY timestamp DESC LIMIT 100"
     data = pd.read_sql(query, connection)
     connection.close()
