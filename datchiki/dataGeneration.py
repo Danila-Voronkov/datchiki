@@ -140,6 +140,7 @@ class SensorFrame(tk.Frame):
 
     def update_data(self):
         data = self.generator.generate_data()
+        self.generator.save_to_database(data)
         text = f"Влажность: {data['humidity']}%, Температура: {data['temperature']}°C, Уровень освещенности: {data['light_level']} люкс"
         self.label.config(text=text)
         self.after(1000, self.update_data)  # Обновляем данные каждую секунду
