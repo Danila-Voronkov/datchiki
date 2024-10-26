@@ -8,41 +8,55 @@ class SensorDataGenerator:
         self.humidity = 50.0  # Начальная влажность
         self.temperature = 22.0  # Начальная температура
         self.light_level = 500.0  # Начальный уровень освещенности
-        self.mode = "normal"  # Режим по умолчанию
+        self.mode = "normal"  # Режим по умолчанию для каждого датчика
 
-    def set_mode(self, mode):
-        """Устанавливает режим генерации данных."""
-        self.mode = mode
+        self.humidity_mode = "normal"  
+        self.temperature_mode = "normal"  
+        self.light_mode = "normal"
+
+        self.running = True  # Флаг для управления циклом генерации данных
+
+    def set_mode(self, mode, sensor_type):
+        """Устанавливает режим генерации данных для указанного датчика."""
+        if sensor_type == "humidity":
+            self.humidity_mode = mode
+        elif sensor_type == "temperature":
+            self.temperature_mode = mode
+        elif sensor_type == "light":
+            self.light_mode = mode
 
     def generate_humidity(self):
-        if self.mode == "normal":
+        mode = self.humidity_mode
+        if mode == "normal":
             change = random.uniform(-1, 1)
-        elif self.mode == "high":
-            change = random.uniform(1, 3)  # Увеличение для завышенного режима
-        elif self.mode == "low":
-            change = random.uniform(-3, -1)  # Уменьшение для заниженного режима
+        elif mode == "high":
+            change = random.uniform(1, 3)
+        elif mode == "low":
+            change = random.uniform(-3, -1)
         
         self.humidity = max(0, min(100, self.humidity + change))
         return round(self.humidity, 2)
 
     def generate_temperature(self):
-        if self.mode == "normal":
+        mode = self.temperature_mode
+        if mode == "normal":
             change = random.uniform(-0.5, 0.5)
-        elif self.mode == "high":
-            change = random.uniform(0.5, 1.5)  # Увеличение для завышенного режима
-        elif self.mode == "low":
-            change = random.uniform(-1.5, -0.5)  # Уменьшение для заниженного режима
+        elif mode == "high":
+            change = random.uniform(0.5, 1.5)
+        elif mode == "low":
+            change = random.uniform(-1.5, -0.5)
         
         self.temperature = max(-30, min(50, self.temperature + change))
         return round(self.temperature, 2)
 
     def generate_light_level(self):
-        if self.mode == "normal":
+        mode = self.light_mode
+        if mode == "normal":
             change = random.uniform(-10, 10)
-        elif self.mode == "high":
-            change = random.uniform(10, 20)  # Увеличение для завышенного режима
-        elif self.mode == "low":
-            change = random.uniform(-20, -10)  # Уменьшение для заниженного режима
+        elif mode == "high":
+            change = random.uniform(10, 20)
+        elif mode == "low":
+            change = random.uniform(-20, -10)
         
         self.light_level = max(0, self.light_level + change)
         return round(self.light_level, 2)
@@ -80,10 +94,19 @@ class SensorDataGenerator:
         temperature = self.generate_temperature()
         light_level = self.generate_light_level()
         timestamp = time.time()  # Время в формате Unix
-
+        
         return {
             'timestamp': timestamp,
             'humidity': humidity,
             'temperature': temperature,
             'light_level': light_level
         }
+    
+    def start_generating(self, update_callback):
+        while self.running:
+            data = self.generate_data()
+            update_callback(data)
+            time.sleep(1)  # Ждем 1 секунду перед генерацией новых данных
+
+    def stop(self):
+        self.running = False
