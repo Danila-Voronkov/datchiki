@@ -12,6 +12,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 filter_last_minute = True  # Если True, показываем данные за последнюю минуту, иначе используем custom_period
 custom_period = 5  # Период в минутах (может быть изменен пользователем)
 
+#А тут был я АРтёмка
 # Флаги для отслеживания состояния окон
 is_humidity_window_open = False
 is_temperature_window_open = False
