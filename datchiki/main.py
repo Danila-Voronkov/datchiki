@@ -19,7 +19,7 @@ def load_section(module_name):
 # Создаем главное окно
 root = tk.Tk()
 root.title("Главное меню")
-root.geometry("400x300")
+root.geometry("1280x720")
 
 # Основной фрейм для отображения содержимого разделов
 content_frame = tk.Frame(root)

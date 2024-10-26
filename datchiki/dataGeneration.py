@@ -1,9 +1,5 @@
 ﻿import tkinter as tk
 
-def main():
-    window = tk.Toplevel()
-    window.title("Файл 1")
-    window.geometry("300x200")
-    label = tk.Label(window, text="Это окно для файла 1")
+def main(frame):
+    label = tk.Label(frame, text="Раздел 1: Заглушка", font=("Arial", 14))
     label.pack(pady=20)
-    window.mainloop()
