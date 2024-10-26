@@ -1,4 +1,4 @@
-import mysql.connector
+п»їimport mysql.connector
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pandas as pd
@@ -7,7 +7,7 @@ from datetime import datetime
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-# Подключение к базе данных
+# РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…
 def get_data_from_db():
     connection = mysql.connector.connect(
 		host="127.0.0.1",
@@ -20,57 +20,57 @@ def get_data_from_db():
     connection.close()
     return data
 
-# Инициализация окна Tkinter
+# РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° Tkinter
 root = tk.Tk()
-root.title("График данных датчиков")
+root.title("Р“СЂР°С„РёРє РґР°РЅРЅС‹С… РґР°С‚С‡РёРєРѕРІ")
 
-# Создаем фигуру и ось для графика
+# РЎРѕР·РґР°РµРј С„РёРіСѓСЂСѓ Рё РѕСЃСЊ РґР»СЏ РіСЂР°С„РёРєР°
 fig, ax = plt.subplots()
 
-# Словарь для хранения линий и состояния видимости
+# РЎР»РѕРІР°СЂСЊ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ Р»РёРЅРёР№ Рё СЃРѕСЃС‚РѕСЏРЅРёСЏ РІРёРґРёРјРѕСЃС‚Рё
 lines = {}
-visibility = {1: True, 2: True}  # Управление видимостью для каждого датчика
+visibility = {1: True, 2: True}  # РЈРїСЂР°РІР»РµРЅРёРµ РІРёРґРёРјРѕСЃС‚СЊСЋ РґР»СЏ РєР°Р¶РґРѕРіРѕ РґР°С‚С‡РёРєР°
 
-# Функция для обновления данных на графике
+# Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РґР°РЅРЅС‹С… РЅР° РіСЂР°С„РёРєРµ
 def update_graph(i):
     data = get_data_from_db()
-    ax.clear()  # Очищаем ось перед перерисовкой
+    ax.clear()  # РћС‡РёС‰Р°РµРј РѕСЃСЊ РїРµСЂРµРґ РїРµСЂРµСЂРёСЃРѕРІРєРѕР№
     
-    # Разделяем данные по sensor_id
+    # Р Р°Р·РґРµР»СЏРµРј РґР°РЅРЅС‹Рµ РїРѕ sensor_id
     for sensor_id in [1, 2]:
         sensor_data = data[data['sensor_id'] == sensor_id]
-        if not sensor_data.empty and visibility[sensor_id]:  # Проверяем видимость датчика
+        if not sensor_data.empty and visibility[sensor_id]:  # РџСЂРѕРІРµСЂСЏРµРј РІРёРґРёРјРѕСЃС‚СЊ РґР°С‚С‡РёРєР°
             ax.plot(sensor_data['timestamp'], sensor_data['value'], label=f"Sensor {sensor_id}")
 
-    ax.legend()  # Добавляем легенду
-    ax.set_xlabel("Время")
-    ax.set_ylabel("Значение")
-    ax.set_title("Данные с датчиков")
+    ax.legend()  # Р”РѕР±Р°РІР»СЏРµРј Р»РµРіРµРЅРґСѓ
+    ax.set_xlabel("Р’СЂРµРјСЏ")
+    ax.set_ylabel("Р—РЅР°С‡РµРЅРёРµ")
+    ax.set_title("Р”Р°РЅРЅС‹Рµ СЃ РґР°С‚С‡РёРєРѕРІ")
 
-# Обработчик кликов на легенде
+# РћР±СЂР°Р±РѕС‚С‡РёРє РєР»РёРєРѕРІ РЅР° Р»РµРіРµРЅРґРµ
 def on_pick(event):
     legend = event.artist
     label = legend.get_text()
-    sensor_id = int(label.split()[-1])  # Получаем номер датчика из текста легенды
+    sensor_id = int(label.split()[-1])  # РџРѕР»СѓС‡Р°РµРј РЅРѕРјРµСЂ РґР°С‚С‡РёРєР° РёР· С‚РµРєСЃС‚Р° Р»РµРіРµРЅРґС‹
 
-    # Переключаем видимость датчика
+    # РџРµСЂРµРєР»СЋС‡Р°РµРј РІРёРґРёРјРѕСЃС‚СЊ РґР°С‚С‡РёРєР°
     visibility[sensor_id] = not visibility[sensor_id]
     
-    # Обновляем цвет текста легенды
+    # РћР±РЅРѕРІР»СЏРµРј С†РІРµС‚ С‚РµРєСЃС‚Р° Р»РµРіРµРЅРґС‹
     legend.set_alpha(1.0 if visibility[sensor_id] else 0.2)
     fig.canvas.draw()
 
-# Подключаем событие выбора на легенде
+# РџРѕРґРєР»СЋС‡Р°РµРј СЃРѕР±С‹С‚РёРµ РІС‹Р±РѕСЂР° РЅР° Р»РµРіРµРЅРґРµ
 fig.canvas.mpl_connect("pick_event", on_pick)
 
-# Настройка анимации для обновления графика
+# РќР°СЃС‚СЂРѕР№РєР° Р°РЅРёРјР°С†РёРё РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РіСЂР°С„РёРєР°
 ani = animation.FuncAnimation(fig, update_graph, interval=1000)
 
-# Добавление графика в окно Tkinter
+# Р”РѕР±Р°РІР»РµРЅРёРµ РіСЂР°С„РёРєР° РІ РѕРєРЅРѕ Tkinter
 canvas = FigureCanvasTkAgg(fig, master=root)
 canvas.get_tk_widget().pack()
 canvas.draw()
 
-# Запуск приложения
+# Р—Р°РїСѓСЃРє РїСЂРёР»РѕР¶РµРЅРёСЏ
 root.mainloop()
 
