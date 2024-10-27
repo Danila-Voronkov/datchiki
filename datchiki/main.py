@@ -1,46 +1,41 @@
-﻿import tkinter as tk
-from dataGeneration import SensorDataGenerator
+import tkinter as tk
+from tkinter import messagebox
+import importlib
 
-class App:
-    def __init__(self):
-        self.generator = SensorDataGenerator()
+# Функция для загрузки раздела из модуля
+def load_section(module_name):
+    try:
+        module = importlib.import_module(module_name)
+        # Очистка содержимого основного фрейма
+        for widget in content_frame.winfo_children():
+            widget.destroy()
+        # Вызов функции main() из модуля для добавления нового содержимого
+        module.main(content_frame)
+    except ModuleNotFoundError:
+        messagebox.showerror("Ошибка", f"Модуль '{module_name}' не найден.")
+    except AttributeError:
+        messagebox.showerror("Ошибка", f"Модуль '{module_name}' не содержит функцию main().")
 
-        self.root = tk.Tk()
-        self.root.title("Датчики")
-        self.root.geometry("400x300")
+# Создаем главное окно
+root = tk.Tk()
+root.title("Главное меню")
+root.geometry("1280x720")
 
-        self.label = tk.Label(self.root, text="", font=("Helvetica", 16))
-        self.label.pack()
+# Основной фрейм для отображения содержимого разделов
+content_frame = tk.Frame(root)
+content_frame.pack(fill="both", expand=True)
 
-        # Кнопки для управления режимами для влажности
-        tk.Button(self.root, text="Влажность: Нормальный", command=lambda: self.set_mode("normal", "humidity")).pack()
-        tk.Button(self.root, text="Влажность: Завышенный", command=lambda: self.set_mode("high", "humidity")).pack()
-        tk.Button(self.root, text="Влажность: Заниженный", command=lambda: self.set_mode("low", "humidity")).pack()
+# Кнопки для переключения между разделами
+btn_section1 = tk.Button(root, text="Раздел 1", command=lambda: load_section("commonGraphic"))
+btn_section1.pack(side="left", fill="x", expand=True)
 
-        # Кнопки для управления режимами для температуры
-        tk.Button(self.root, text="Температура: Нормальный", command=lambda: self.set_mode("normal", "temperature")).pack()
-        tk.Button(self.root, text="Температура: Завышенный", command=lambda: self.set_mode("high", "temperature")).pack()
-        tk.Button(self.root, text="Температура: Заниженный", command=lambda: self.set_mode("low", "temperature")).pack()
+btn_section2 = tk.Button(root, text="Раздел 2", command=lambda: load_section("dataGeneration"))
+btn_section2.pack(side="left", fill="x", expand=True)
 
-        # Кнопки для управления режимами для освещенности
-        tk.Button(self.root, text="Освещенность: Нормальный", command =lambda: self.set_mode("normal", "light")).pack()
-        tk.Button(self.root, text="Освещенность: Завышенный", command=lambda: self.set_mode("high", "light")).pack()
-        tk.Button(self.root, text="Освещенность: Заниженный", command=lambda: self.set_mode("low", "light")).pack()
+btn_section3 = tk.Button(root, text="Раздел 3", command=lambda: load_section("section3"))
+btn_section3.pack(side="left", fill="x", expand=True)
 
-        self.update_data()
+# Загрузка первого раздела по умолчанию
+load_section("commonGraphic")
 
-    def set_mode(self, mode, sensor_type):
-        self.generator.set_mode(mode, sensor_type)
-
-    def update_data(self):
-        data = self.generator.generate_data()
-        text = f"Влажность: {data['humidity']}%, Температура: {data['temperature']}°C, Уровень освещенности: {data['light_level']} люкс"
-        self.label.config(text=text)
-        self.root.after(1000, self.update_data)  # Обновляем данные каждую секунду
-
-    def start(self):
-        self.root.mainloop()
-
-if __name__ == "__main__":
-    app = App()
-    app.start()
+root.mainloop()

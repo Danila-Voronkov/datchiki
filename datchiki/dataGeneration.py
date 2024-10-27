@@ -1,6 +1,7 @@
-﻿import random
+import random
 import time
 import mysql.connector
+import tkinter as tk
 
 class SensorDataGenerator:
     def __init__(self):
@@ -8,8 +9,6 @@ class SensorDataGenerator:
         self.humidity = 50.0  # Начальная влажность
         self.temperature = 22.0  # Начальная температура
         self.light_level = 500.0  # Начальный уровень освещенности
-        self.mode = "normal"  # Режим по умолчанию для каждого датчика
-
         self.humidity_mode = "normal"  
         self.temperature_mode = "normal"  
         self.light_mode = "normal"
@@ -79,7 +78,7 @@ class SensorDataGenerator:
         # Подготовка данных для вставки
         values = [
             (data['humidity'], timestamp, 1),  # Влажность
-            (data['temperature'], timestamp, 2),     # Температура
+            (data['temperature'], timestamp, 2),  # Температура
             (data['light_level'], timestamp, 3)  # Освещенность
         ]
         
@@ -110,3 +109,44 @@ class SensorDataGenerator:
 
     def stop(self):
         self.running = False
+
+
+class SensorFrame(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.generator = SensorDataGenerator()
+
+        self.label = tk.Label(self, text="", font=("Helvetica", 16))
+        self.label.pack()
+
+        # Кнопки для управления режимами для влажности
+        tk.Button(self, text="Влажность: Нормальный", command=lambda: self.set_mode("normal", "humidity")).pack()
+        tk.Button(self, text="Влажность: Завышенный", command=lambda: self.set_mode("high", "humidity")).pack()
+        tk.Button(self, text="Влажность: Заниженный", command=lambda: self.set_mode("low", "humidity")).pack()
+
+        # Кнопки для управления режимами для температуры
+        tk.Button(self, text="Температура: Нормальный", command=lambda: self.set_mode("normal", "temperature")).pack()
+        tk.Button(self, text="Температура: Завышенный", command=lambda: self.set_mode("high", "temperature")).pack()
+        tk.Button(self, text="Температура: Заниженный", command=lambda: self.set_mode("low", "temperature")).pack()
+
+        # Кнопки для управления режимами для освещенности
+        tk.Button(self, text="Освещенность: Нормальный", command=lambda: self.set_mode("normal", "light")).pack()
+        tk.Button(self, text="Освещенность: Завышенный", command=lambda: self.set_mode("high", "light")).pack()
+        tk.Button(self, text="Освещенность: Заниженный", command=lambda: self.set_mode("low", "light")).pack()
+
+        self.update_data()
+
+    def set_mode(self, mode, sensor_type):
+        self.generator.set_mode(mode, sensor_type)
+
+    def update_data(self):
+        data = self.generator.generate_data()
+        self.generator.save_to_database(data)
+        text = f"Влажность: {data['humidity']}%, Температура: {data['temperature']}°C, Уровень освещенности: {data['light_level']} люкс"
+        self.label.config(text=text)
+        self.after(1000, self.update_data)  # Обновляем данные каждую секунду
+
+def main(parent_frame):
+    """Функция для инициализации интерфейса в переданном фрейме."""
+    frame = SensorFrame(parent_frame)
+    frame.pack(fill="both", expand=True)
