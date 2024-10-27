@@ -1,4 +1,4 @@
-﻿import random
+import random
 import time
 import mysql.connector
 import tkinter as tk
@@ -12,6 +12,7 @@ class SensorDataGenerator:
         self.humidity_mode = "normal"  
         self.temperature_mode = "normal"  
         self.light_mode = "normal"
+
         self.running = True  # Флаг для управления циклом генерации данных
 
     def set_mode(self, mode, sensor_type):
