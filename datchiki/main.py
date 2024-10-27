@@ -32,7 +32,7 @@ btn_section1.pack(side="left", fill="x", expand=True)
 btn_section2 = tk.Button(root, text="Раздел 2", command=lambda: load_section("dataGeneration"))
 btn_section2.pack(side="left", fill="x", expand=True)
 
-btn_section3 = tk.Button(root, text="Раздел 3", command=lambda: load_section("section3"))
+btn_section3 = tk.Button(root, text="Раздел 3", command=lambda: load_section("commonData"))
 btn_section3.pack(side="left", fill="x", expand=True)
 
 # Загрузка первого раздела по умолчанию
